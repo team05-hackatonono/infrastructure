@@ -1,4 +1,4 @@
-resource "azurerm_frontdoor" "mshack" {
+resource "azurerm_frontdoor" "team5" {
    name                                         = var.frontdoorname
    location                                     = var.location
    resource_group_name                          = var.resource_group_name
