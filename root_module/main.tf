@@ -41,14 +41,14 @@ locals {
 
 //RG
 module "ResourceGroup" {
-  source   = "../module/ResourceGroup"
+  source   = "../solution/module/ResourceGroup"
   tupla_rg = var.tupla_rg
 }
 
 //Log Analytics
 module "LogAnalitycs" {
-  source              = "../module/LogAnalitycs"
-  name                = "mshack"
+  source              = "../solution/module/LogAnalitycs"
+  name                = "team5"
   depends_on          = [module.ResourceGroup]                                    // Dependencia Explicita.
   resource_group_name = join(",", module.ResourceGroup.name[*].RGEU2001.name)     // Dependencia implicita
   location            = join(",", module.ResourceGroup.name[*].RGEU2001.location) // Dependencia implicita
@@ -65,7 +65,7 @@ module "LogAnalitycs" {
 }
 //SQLServer
 module "SQLServer" {
-  source                       = "../module/SQLServer"
+  source                       = "../solution/module/SQLServer"
   depends_on                   = [module.ResourceGroup, module.LogAnalitycs]
   location                     = join(",", module.ResourceGroup.name[*].RGEU2001.location)
   sc_name                      = "holaychao"
@@ -99,7 +99,7 @@ module "SQLServer" {
 //AppServices
 module "Appservice" {
   for_each            = var.tupla_rg
-  source              = "../module/AppServices"
+  source              = "../solution/module/AppServices"
   depends_on          = [module.ResourceGroup, module.SQLServer]
   asp_name            = "${each.value.location}${random_string.str.result}asp"
   wa_name             = "${each.value.location}${random_string.str.result}app"
