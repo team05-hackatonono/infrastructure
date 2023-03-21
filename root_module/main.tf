@@ -46,8 +46,8 @@ module "ResourceGroup" {
 }
 
 //Log Analytics
-module "LogAnalitycs" {
-  source              = "../solution/module/LogAnalitycs"
+module "LogAnalytics" {
+  source              = "../solution/module/LogAnalytics"
   name                = "team5"
   depends_on          = [module.ResourceGroup]                                    // Dependencia Explicita.
   resource_group_name = join(",", module.ResourceGroup.name[*].RGEU2001.name)     // Dependencia implicita
@@ -66,16 +66,16 @@ module "LogAnalitycs" {
 //SQLServer
 module "SQLServer" {
   source                       = "../solution/module/SQLServer"
-  depends_on                   = [module.ResourceGroup, module.LogAnalitycs]
+  depends_on                   = [module.ResourceGroup, module.LogAnalytics]
   location                     = join(",", module.ResourceGroup.name[*].RGEU2001.location)
   sc_name                      = "holaychao"
-  sqlserver_name               = local.sqlserver_name == null ? random_string.str.result : local.sqlserver_name
+  SQLServer_name               = local.SQLServer_name == null ? random_string.str.result : local.SQLServer_name
   db_name                      = "demomssqldb"
   sql_database_edition         = "Standard"
   sqldb_service_objective_name = "S1"
   resource_group_name          = join(",", module.ResourceGroup.name[*].RGEU2001.name)
 
-  log_analytics_workspace_id = module.LogAnalitycs.resource_id
+  log_analytics_workspace_id = module.LogAnalytics.resource_id
   log_retention_days         = 7
 
   firewall_rules = [
@@ -99,7 +99,7 @@ module "SQLServer" {
 //AppServices
 module "Appservice" {
   for_each            = var.tupla_rg
-  source              = "../solution/module/AppServices"
+  source              = "../solution/module/AppService"
   depends_on          = [module.ResourceGroup, module.SQLServer]
   asp_name            = "${each.value.location}${random_string.str.result}asp"
   wa_name             = "${each.value.location}${random_string.str.result}app"
@@ -123,5 +123,5 @@ module "Appservice" {
   }]
   app_insights_name         = "${random_string.str.result}app_insights"
   application_insights_type = "web"
-  //workspace_id = module.LogAnalitycs.workspace_id
+  //workspace_id = module.LogAnalytics.workspace_id
 }
