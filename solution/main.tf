@@ -12,3 +12,4 @@ resource "azurerm_resource_group" "az_rg_team5_br" {
 name = "az_rg_team5_br"
 location = "South Brazil"
 }
+
